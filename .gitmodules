@@ -1,0 +1,6 @@
+[submodule "Firmware/lib/MAX7219LedMatrix"]
+	path = Firmware/lib/MAX7219LedMatrix
+	url = git@github.com:william-redenbaugh/MAX7219LedMatrix.git
+[submodule "Firmware/lib/TeensyOS"]
+	path = Firmware/lib/TeensyOS
+	url = git@github.com:william-redenbaugh/TeensyOS.git
