@@ -1,6 +1,6 @@
 {
     "env": {
-        "mySpresenseSdkPath": "/home/wredenba/git/spresense"
+        "mySpresenseSdkPath": "/Users/wredenba/spresense"
     },
     "configurations": [
         {

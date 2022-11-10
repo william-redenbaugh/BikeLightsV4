@@ -76,13 +76,15 @@ int main(int argc, FAR char *argv[])
   int fd;
 
   /* Open the i2c driver */
-
+  printf("Initializing i2c device...\n");
   fd = open("/dev/i2c0", O_WRONLY);
-  if (fd < 0)
-    {
-      printf("ERROR: failed to open /dev/i2c0: %d\n", fd);
-      return ERROR;
-    }
+  if (fd < 0){
+    printf("ERROR: failed to open /dev/i2c0: %d\n", fd);
+    return ERROR;
+  }
+  else{
+    printf("i2c init successful!\n");
+  }
   close(fd);
 
   return 0;
