@@ -4,9 +4,9 @@
 [submodule "Firmware/lib/TeensyOS"]
 	path = Firmware/lib/TeensyOS
 	url = git@github.com:william-redenbaugh/TeensyOS.git
-[submodule "led_matrix_spressense/led_matrix/pubsub-c"]
-	path = led_matrix_spressense/led_matrix/pubsub-c
-	url = git@github.com:jaracil/pubsub-c.git
 [submodule "led_matrix_spressense/led_matrix/HSV-RGB-Conversion"]
 	path = led_matrix_spressense/led_matrix/HSV-RGB-Conversion
 	url = git@github.com:william-redenbaugh/HSV-RGB-Conversion.git
+[submodule "led_matrix_spressense/led_matrix/pubsub-c"]
+	path = led_matrix_spressense/led_matrix/pubsub-c
+	url = git@github.com:william-redenbaugh/pubsub-c.git
