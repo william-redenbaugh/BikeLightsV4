@@ -663,7 +663,7 @@ void image(uint8_t image[64][3])
 
     i2c_msg.addr = RGB_MATRIX_ADDRESS;
     i2c_msg.buffer = out_buff;
-    i2c_msg.length = data_lenth + 2;
+    i2c_msg.length = data_lenth + 3;
     i2c_msg.flags = I2C_M_NOSTART;
     i2c_msg.frequency = I2C_SPEED_FAST;
 

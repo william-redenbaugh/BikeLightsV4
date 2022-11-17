@@ -35,8 +35,8 @@ Parameter:R: the value of RED.   Range:RED 0~255
           G: the value of GREEN. Range:RED 0~255
           B: the value of BLUE.  Range:RED 0~255
 ********************************************************/
-void DispShowColor(uint8_t R, uint8_t G, uint8_t B);
-void DispShowColor_uint32(uint32_t c);
+void disp_show_color(uint8_t R, uint8_t G, uint8_t B);
+void disp_show_color_uint32(uint32_t c);
 /********************************************************
 Name:DispShowColor
 Function:Fill a color in LED matrix

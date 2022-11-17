@@ -15,7 +15,6 @@
 #include <pthread.h>
 #include "pubsub-c/pubsub.h"
 #include "led_matrix_runtime.h"
-#include "HSV-RGB-Conversion/hsv.h"
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -85,24 +84,23 @@ void tree()
 int i = 0;
 void dot()
 {
-    for (int n = 0; n < 200; n++)
+    int lenTotal_flash = sizeof(flash) / sizeof(uint8_t);
+    int lenLow_flash = sizeof(flash[0]) / sizeof(uint8_t);
+    int lenHigh_flash = lenTotal_flash / lenLow_flash;
+    // for (int i=0; i<lenHigh_flash; i++){
+    //   draw_point_color(flash[i],100,100,100);
+    // }
+    // image_test();
+    for (int j = 0; j < lenHigh_flash; j++)
     {
-        struct HsvColor hsv_col;
-        hsv_col.s = 255;
-        hsv_col.h = 0;
-        hsv_col.v = n;
-        struct RgbColor rgb_col = HsvToRgb(hsv_col);
-        for (int x = 0; x < 8; x++)
+        draw_point_color(flash[j], color[i][0], color[i][1], color[i][2]);
+        i++;
+        if (i == 7)
         {
-            for (int y = 0; y < 8; y++)
-            {
-                int point[2] = {x, y};
-                draw_point_color(point, rgb_col.r, rgb_col.g, rgb_col.b);
-            }
+            i = 0;
         }
-        image_test();
-        usleep(10000);
     }
+    image_test();
 }
 
 void led_matrix_thread(void *params)
@@ -114,8 +112,8 @@ void led_matrix_thread(void *params)
     for (;;)
     {
         dot();
-        // ps_msg_t *msg = ps_get(sub, -1);
-        // ps_unref_msg(msg);
+        ps_msg_t *msg = ps_get(sub, -1);
+        ps_unref_msg(msg);
     }
 }
 
