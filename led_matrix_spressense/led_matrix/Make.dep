@@ -102,7 +102,8 @@ led_matrix_runtime.c.Users.wredenba.git.BikeLightsV4.led_matrix_spressense.led_m
  /Users/wredenba/spresense/nuttx/include/syslog.h \
  /Users/wredenba/spresense/nuttx/include/nuttx/i2c/i2c_master.h \
  rgbMatrixI2CDriver/rgbMatrix.h rgbMatrixI2CDriver/rgbMatrix.h \
- pubsub-c/pubsub.h led_matrix_runtime/led_matrix_runtime.h
+ pubsub-c/pubsub.h led_matrix_runtime/led_matrix_runtime.h \
+ HSV-RGB-Conversion/hsv.h
 psqueue_b.c.Users.wredenba.git.BikeLightsV4.led_matrix_spressense.led_matrix.o: \
  pubsub-c/psqueue_b.c pubsub-c/psqueue.h \
  /Users/wredenba/spresense/nuttx/include/stddef.h \
