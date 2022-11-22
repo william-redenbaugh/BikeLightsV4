@@ -186,23 +186,23 @@ void heart_animation(void)
 {
     draw_bitmap_red(charBlank);
     usleep(1000000);
-    draw_bitmap(heart0);
+    draw_bitmap_red(heart0);
     usleep(100000);
-    draw_bitmap(heart1);
+    draw_bitmap_red(heart1);
     usleep(100000);
-    draw_bitmap(heart2);
+    draw_bitmap_red(heart2);
     usleep(100000);
-    draw_bitmap(heart3);
+    draw_bitmap_red(heart3);
     usleep(100000);
-    draw_bitmap(heart4);
+    draw_bitmap_red(heart4);
     usleep(1000000);
-    draw_bitmap(heart3);
+    draw_bitmap_red(heart3);
     usleep(100000);
-    draw_bitmap(heart2);
+    draw_bitmap_red(heart2);
     usleep(100000);
-    draw_bitmap(heart1);
+    draw_bitmap_red(heart1);
     usleep(100000);
-    draw_bitmap(heart0);
+    draw_bitmap_red(heart0);
     usleep(100000);
 }
 
@@ -245,17 +245,7 @@ void led_matrix_thread(void *params)
     RGBMatrixInit(&handle);
     for (;;)
     {
-        struct HsvColor current = {0, 0, 0};
-        struct HsvColor next = {0, 255, 90};
-        fade_color(10000, current, next);
-
-        next = (struct HsvColor){128, 255, 90};
-        current = (struct HsvColor){0, 255, 90};
-        fade_color(10000, current, next);
-
-        current = (struct HsvColor){128, 255, 90};
-        next = (struct HsvColor){0, 0, 0};
-        fade_color(10000, current, next);
+        heart_animation();
     }
 }
 

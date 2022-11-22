@@ -17,10 +17,12 @@
 #include "pubsub-c/pubsub.h"
 #include "led_matrix_runtime/led_matrix_runtime.h"
 #include "thread_init/threads_init.h"
+#include "statemachine/statemachine_test.h"
 
 int main(int argc, FAR char *argv[])
 {
   ps_init();
+  test_sm();
   threads_list_init();
 
   while (1)

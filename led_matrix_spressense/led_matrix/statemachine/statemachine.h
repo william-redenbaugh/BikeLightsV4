@@ -5,8 +5,8 @@ typedef void (*event_fn_t)(int event, void *params, int *next_state);
 typedef void (*entry_fn_t)(void *params);
 typedef void (*exit_fn_t)(void *params);
 
-const int SM_STATE_NULL = -1;
-const int SM_EVENT_NULL = -1;
+#define SM_STATE_NULL -1
+#define SM_EVENT_NULL -1
 
 typedef struct sm_transition_t
 {
@@ -26,7 +26,7 @@ typedef struct sm_state_t
 typedef struct sm_handle_t
 {
     int current_state;
-    const sm_state_t *states_table;
+    sm_state_t *states_table;
     int num_states;
 } sm_handle_t;
 

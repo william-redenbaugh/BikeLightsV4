@@ -13,6 +13,7 @@
 
 int init_statemachine(sm_handle_t *sm_handle, const sm_state_t *states, int current_state)
 {
+    printf("Initializing statemachine...\n");
     // Make sure we aren't touching any null references.
     if (sm_handle == NULL | states == NULL)
         return EINVAL;
@@ -20,17 +21,20 @@ int init_statemachine(sm_handle_t *sm_handle, const sm_state_t *states, int curr
     sm_handle->states_table = states;
     sm_handle->current_state = current_state;
 
+    printf("Setting up state stable and current state\n");
+
     int n = 0;
     int temp_state = sm_handle->states_table[n].state;
     while (temp_state != SM_STATE_NULL)
     {
-        int temp_state = sm_handle->states_table[n].state;
+        temp_state = sm_handle->states_table[n].state;
         n++;
     }
 
     if (n == 0)
         return ENODATA;
 
+    printf("Finalizing Statemachine initialization\n");
     sm_handle->num_states = n;
 
     return 0;
@@ -47,36 +51,42 @@ int submit_event(sm_handle_t *sm_handle, int next_event, void *params)
     if (current_state == SM_STATE_NULL)
         return;
 
+    printf("Current state:%d\n", current_state);
+
+    // printf("Current state: %d\n", sm_handle->current_state);
+
     // Get our list of transitions
     sm_transition_t *selected_transition_table = sm_handle->states_table[current_state].sm_transitions;
     // Based on the current state we are in, we shall select a particular transition table
 
     // iterate through the transition table until we reach the end or the relevent event callback
-    int n = 0;
-    while (selected_transition_table[n].event == SM_EVENT_NULL || selected_transition_table[n].event == next_event)
-    {
-        if (selected_transition_table[n].event == SM_EVENT_NULL)
-        {
-            return EIO;
-        }
-        if (selected_transition_table[n].event == next_event)
-        {
-            int next_state = selected_transition_table[n].next_state;
-            // Since we are exiting the previous state, call the previous state function if not null
-            if (sm_handle->states_table[sm_handle->current_state].exit_fn != NULL)
-                sm_handle->states_table[sm_handle->current_state].exit_fn(params);
-            // Call transition
-            selected_transition_table[n].event_fn(next_event, params, &next_state);
-            // Now we know what the next state will be, so we shall set it in our
-            // SM handler
-            sm_handle->current_state = next_state;
+    // Or if no event exists we reach the end of the table
+    int n = next_event;
 
-            // Now that we are entering a new state in our state machine, we can call the next state's entry function if not null.
-            if (sm_handle->states_table[sm_handle->current_state].entry_fn != NULL)
-                sm_handle->states_table[sm_handle->current_state].entry_fn(params);
-            return 0;
-        }
-        n++;
+    printf("Event: %d\n", n);
+
+    if (selected_transition_table[n].event == SM_EVENT_NULL)
+    {
+        return EIO;
+    }
+    if (selected_transition_table[n].event == next_event)
+    {
+        // Once we find the matching event, we find
+        int next_state = selected_transition_table[n].next_state;
+        printf("Next state: %d\n", next_state);
+        // Since we are exiting the previous state, call the previous state function if not null
+        if (sm_handle->states_table[current_state].exit_fn != NULL)
+            sm_handle->states_table[current_state].exit_fn(params);
+        // Call transition
+        selected_transition_table[n].event_fn(next_event, params, &next_state);
+        // Now we know what the next state will be, so we shall set it in our
+        // SM handler
+        sm_handle->current_state = next_state;
+
+        // Now that we are entering a new state in our state machine, we can call the next state's entry function if not null.
+        if (sm_handle->states_table[sm_handle->current_state].entry_fn != NULL)
+            sm_handle->states_table[sm_handle->current_state].entry_fn(params);
+        return 0;
     }
     return 0;
 }
