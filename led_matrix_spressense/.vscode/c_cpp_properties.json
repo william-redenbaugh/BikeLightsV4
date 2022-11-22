@@ -18,7 +18,8 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "compilerPath": "${config:spresense.env.toolchain.path}/arm-none-eabi-gcc"
+            "compilerPath": "${config:spresense.env.toolchain.path}/arm-none-eabi-gcc",
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4

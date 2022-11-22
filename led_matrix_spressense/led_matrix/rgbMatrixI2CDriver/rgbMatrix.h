@@ -10,10 +10,16 @@
 #include <nuttx/i2c/i2c_master.h>
 #include "rgbMatrix.h"
 
-void RGBMatrixInit();
+struct I2C1735
+{
+    uint8_t rgb_buffer[64][3];
+    int i2c_handle;
+};
+
+void RGBMatrixInit(struct I2C1735 *handle);
 
 /********************************************************
-Name:DispShowChar
+Name:disp_show_char
 Function:Display a English latter in LED matrix
 Parameter:chr :the latter want to show
           R: the value of RED.   Range:RED 0~255
@@ -21,13 +27,14 @@ Parameter:chr :the latter want to show
           B: the value of BLUE.  Range:RED 0~255
           bias: the bias of a letter in LED Matrix.Range -7~7
 ********************************************************/
-void DispShowChar(char chr, uint8_t R, uint8_t G, uint8_t B, char bias, char direction);
-void flowchar(char chr, uint8_t R, uint8_t G, uint8_t B);
-void Showtext(char str[], uint8_t R, uint8_t G, uint8_t B);
-void flow_text(char str[], uint8_t R, uint8_t G, uint8_t B, char direction, int delayms);
-void set_backcolor(uint8_t R, uint8_t G, uint8_t B);
-void ShowHex(uint8_t hex[], uint8_t R, uint8_t G, uint8_t B, char bias /*,char up_down=0*/);
+void disp_show_color(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
+void flowchar(struct I2C1735 *handle, char chr, uint8_t R, uint8_t G, uint8_t B);
+void show_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B);
+void flow_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B, char direction, int delayms);
+void set_backcolor(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
+void show_hex(struct I2C1735 *handle, uint8_t hex[], uint8_t R, uint8_t G, uint8_t B, char bias /*,char up_down=0*/);
 uint8_t pow(uint8_t x, uint8_t n);
+void disp_show_color_uint32(struct I2C1735 *handle, uint32_t c);
 /********************************************************
 Name:DispShowColor
 Function:Fill a color in LED matrix
@@ -35,27 +42,18 @@ Parameter:R: the value of RED.   Range:RED 0~255
           G: the value of GREEN. Range:RED 0~255
           B: the value of BLUE.  Range:RED 0~255
 ********************************************************/
-void disp_show_color(uint8_t R, uint8_t G, uint8_t B);
-void disp_show_color_uint32(uint32_t c);
-/********************************************************
-Name:DispShowColor
-Function:Fill a color in LED matrix
-Parameter:R: the value of RED.   Range:RED 0~255
-          G: the value of GREEN. Range:RED 0~255
-          B: the value of BLUE.  Range:RED 0~255
-********************************************************/
-void draw_point_color(uint8_t coor[2], uint8_t R, uint8_t G, uint8_t B);
-void draw_point(uint8_t coor[2], uint32_t c);
+void draw_point_color(struct I2C1735 *handle, uint8_t coor[2], uint8_t R, uint8_t G, uint8_t B);
+void draw_point(struct I2C1735 *handle, uint8_t coor[2], uint32_t c);
 
-void draw_line_color(uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
-void draw_line(uint8_t coor[4], uint32_t c);
+void draw_line_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
+void draw_line(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
 
-void draw_rectangle_color(uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
-void draw_rectangle(uint8_t coor[4], uint32_t c);
+void draw_rectangle_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
+void draw_rectangle(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
 
-void DispShowPic(uint8_t Index, uint8_t R, uint8_t G, uint8_t B);
+void DispShowPic(struct I2C1735 *handle, uint8_t Index, uint8_t R, uint8_t G, uint8_t B);
 
-void ShowPic(uint8_t Index);
+void ShowPic(struct I2C1735 *handle, uint8_t Index);
 
 static const uint8_t _NeoPixelGammaTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -79,11 +77,10 @@ static const uint8_t _NeoPixelGammaTable[256] = {
     @brief  Class that stores state and functions for interacting with
             Adafruit NeoPixels and compatible devices.
 */
-void image_test();
-void image(uint8_t image[64][3]);
+void image_test(struct I2C1735 *handle);
+void image(struct I2C1735 *handle);
 
-uint32_t ColorHSV(uint16_t hue, uint8_t sat, uint8_t val);
+uint32_t color_hsv(uint16_t hue, uint8_t sat, uint8_t val);
 
 uint32_t gamma32(uint32_t x);
-
 #endif

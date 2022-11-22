@@ -15,7 +15,7 @@
 #include <pthread.h>
 #include "pubsub-c/pubsub.h"
 #include "led_matrix_runtime.h"
-
+#include "HSV-RGB-Conversion/hsv.h"
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
@@ -53,6 +53,8 @@ uint8_t color[7][3] = {{255, 0, 0},
                        {0, 0, 255},
                        {128, 0, 128}};
 
+struct I2C1735 handle;
+
 void tree()
 {
     int lenTotal_green = sizeof(green) / sizeof(uint8_t);
@@ -60,25 +62,25 @@ void tree()
     int lenHigh_green = lenTotal_green / lenLow_green;
     for (int i = 0; i < lenHigh_green; i++)
     {
-        draw_point_color(green[i], 0, 60, 0);
+        draw_point_color(&handle, green[i], 0, 60, 0);
     }
-    image_test();
+    image_test(&handle);
     int lenTotal_yellow = sizeof(yellow) / sizeof(uint8_t);
     int lenLow_yellow = sizeof(yellow[0]) / sizeof(uint8_t);
     int lenHigh_yellow = lenTotal_yellow / lenLow_yellow;
     for (int i = 0; i < lenHigh_yellow; i++)
     {
-        draw_point_color(yellow[i], 60, 60, 0);
+        draw_point_color(&handle, yellow[i], 60, 60, 0);
     }
-    image_test();
+    image_test(&handle);
     int lenTotal_red = sizeof(red) / sizeof(uint8_t);
     int lenLow_red = sizeof(red[0]) / sizeof(uint8_t);
     int lenHigh_red = lenTotal_red / lenLow_red;
     for (int i = 0; i < lenHigh_red; i++)
     {
-        draw_point_color(red[i], 60, 0, 0);
+        draw_point_color(&handle, red[i], 60, 0, 0);
     }
-    image_test();
+    image_test(&handle);
 }
 
 int i = 0;
@@ -93,27 +95,157 @@ void dot()
     // image_test();
     for (int j = 0; j < lenHigh_flash; j++)
     {
-        draw_point_color(flash[j], color[i][0], color[i][1], color[i][2]);
+        draw_point_color(&handle, flash[j], color[i][0], color[i][1], color[i][2]);
         i++;
         if (i == 7)
         {
             i = 0;
         }
     }
-    image_test();
+    image_test(&handle);
+}
+
+const uint8_t charBlank[8][8] = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+
+const uint8_t heart0[8][8] = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+
+const uint8_t heart1[8][8] = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+
+const uint8_t heart2[8][8] = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 1, 0, 0, 1, 1, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {0, 1, 1, 1, 1, 1, 1, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0}};
+
+const uint8_t heart3[8][8] = {
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 1, 0, 0, 1, 1, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {0, 1, 1, 1, 1, 1, 1, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+
+const uint8_t heart4[8][8] = {
+    {0, 1, 1, 0, 0, 1, 1, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {0, 1, 1, 1, 1, 1, 1, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+
+static void draw_bitmap_red(uint8_t image[8][8])
+{
+    disp_show_color(&handle, 0, 0, 0);
+    for (int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            if (image[x][y] == 1)
+            {
+                uint8_t pos[2] = {x, y};
+                draw_point_color(&handle, pos, 120, 0, 0);
+            }
+        }
+    }
+    image_test(&handle);
+}
+
+void heart_animation(void)
+{
+    draw_bitmap_red(charBlank);
+    usleep(1000000);
+    draw_bitmap_red(heart0);
+    usleep(100000);
+    draw_bitmap_red(heart1);
+    usleep(100000);
+    draw_bitmap_red(heart2);
+    usleep(100000);
+    draw_bitmap_red(heart3);
+    usleep(100000);
+    draw_bitmap_red(heart4);
+    usleep(1000000);
+    draw_bitmap_red(heart3);
+    usleep(100000);
+    draw_bitmap_red(heart2);
+    usleep(100000);
+    draw_bitmap_red(heart1);
+    usleep(100000);
+    draw_bitmap_red(heart0);
+    usleep(100000);
+}
+
+void fade_color(int speed_usleep, struct HsvColor prev, struct HsvColor next)
+{
+    for (uint8_t n = 0; n < 255; n++)
+    {
+        if (prev.h < next.h)
+        {
+            prev.h++;
+        }
+        if (prev.s < next.s)
+        {
+            prev.s++;
+        }
+        if (prev.v < next.v)
+        {
+            prev.v++;
+        }
+        if (prev.h > next.h)
+        {
+            prev.h--;
+        }
+        if (prev.s > next.s)
+        {
+            prev.s--;
+        }
+        if (prev.v > next.v)
+        {
+            prev.v--;
+        }
+        struct RgbColor col = HsvToRgb(prev);
+        disp_show_color(&handle, col.r, col.g, col.b);
+    }
 }
 
 void led_matrix_thread(void *params)
 {
-    RGBMatrixInit();
-    draw_rectangle_color(rectangle_coor, 0, 0, 0);
-    tree();
-    ps_subscriber_t *sub = ps_new_subscriber(100, STRLIST("dot.ready"));
+    memset(&handle, 0, sizeof(handle));
+    RGBMatrixInit(&handle);
     for (;;)
     {
-        dot();
-        ps_msg_t *msg = ps_get(sub, -1);
-        ps_unref_msg(msg);
+        heart_animation();
     }
 }
 
@@ -121,7 +253,7 @@ void led_trigger_thread(void *params)
 {
     for (;;)
     {
-        PUB_BOOL_FL("dot.ready", true, FL_STICKY);
+        // PUB_BOOL_FL("dot.ready", true, FL_STICKY);
         usleep(100000);
     }
 }
