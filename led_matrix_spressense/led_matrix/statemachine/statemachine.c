@@ -13,7 +13,7 @@
 
 int init_statemachine(sm_handle_t *sm_handle, const sm_state_t *states, int current_state)
 {
-    printf("Initializing statemachine...\n");
+    SM_PRINTF_DEBUG("Initializing statemachine...\n");
     // Make sure we aren't touching any null references.
     if (sm_handle == NULL | states == NULL)
         return EINVAL;
@@ -21,7 +21,7 @@ int init_statemachine(sm_handle_t *sm_handle, const sm_state_t *states, int curr
     sm_handle->states_table = states;
     sm_handle->current_state = current_state;
 
-    printf("Setting up state stable and current state\n");
+    SM_PRINTF_DEBUG("Setting up state stable and current state\n");
 
     int n = 0;
     int temp_state = sm_handle->states_table[n].state;
@@ -34,7 +34,7 @@ int init_statemachine(sm_handle_t *sm_handle, const sm_state_t *states, int curr
     if (n == 0)
         return ENODATA;
 
-    printf("Finalizing Statemachine initialization\n");
+    SM_PRINTF_DEBUG("Finalizing Statemachine initialization\n");
     sm_handle->num_states = n;
 
     return 0;
@@ -51,7 +51,7 @@ int submit_event(sm_handle_t *sm_handle, int next_event, void *params)
     if (current_state == SM_STATE_NULL)
         return;
 
-    printf("Current state:%d\n", current_state);
+    SM_PRINTF_DEBUG("Current state:%d\n", current_state);
 
     // printf("Current state: %d\n", sm_handle->current_state);
 
@@ -61,19 +61,23 @@ int submit_event(sm_handle_t *sm_handle, int next_event, void *params)
 
     // iterate through the transition table until we reach the end or the relevent event callback
     // Or if no event exists we reach the end of the table
-    int n = next_event;
+    int n = 0;
+    while ((selected_transition_table[n].event = !next_event) || selected_transition_table[n].event == SM_EVENT_NULL)
+        n++;
 
-    printf("Event: %d\n", n);
+    SM_PRINTF_DEBUG("Event: %d\n", n);
 
     if (selected_transition_table[n].event == SM_EVENT_NULL)
     {
+        SM_PRINTF_DEBUG("No event matched with this current state in the statemachine\n");
+
         return EIO;
     }
     if (selected_transition_table[n].event == next_event)
     {
+        SM_PRINTF_DEBUG("Matching event found for this state in the statemachine, executing...\n ");
         // Once we find the matching event, we find
         int next_state = selected_transition_table[n].next_state;
-        printf("Next state: %d\n", next_state);
         // Since we are exiting the previous state, call the previous state function if not null
         if (sm_handle->states_table[current_state].exit_fn != NULL)
             sm_handle->states_table[current_state].exit_fn(params);
