@@ -10,51 +10,6 @@
 #include <nuttx/i2c/i2c_master.h>
 #include "rgbMatrix.h"
 
-struct I2C1735
-{
-    uint8_t rgb_buffer[64][3];
-    int i2c_handle;
-};
-
-void RGBMatrixInit(struct I2C1735 *handle);
-
-/********************************************************
-Name:disp_show_char
-Function:Display a English latter in LED matrix
-Parameter:chr :the latter want to show
-          R: the value of RED.   Range:RED 0~255
-          G: the value of GREEN. Range:RED 0~255
-          B: the value of BLUE.  Range:RED 0~255
-          bias: the bias of a letter in LED Matrix.Range -7~7
-********************************************************/
-void disp_show_color(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
-void flowchar(struct I2C1735 *handle, char chr, uint8_t R, uint8_t G, uint8_t B);
-void show_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B);
-void flow_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B, char direction, int delayms);
-void set_backcolor(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
-void show_hex(struct I2C1735 *handle, uint8_t hex[], uint8_t R, uint8_t G, uint8_t B, char bias /*,char up_down=0*/);
-uint8_t pow(uint8_t x, uint8_t n);
-void disp_show_color_uint32(struct I2C1735 *handle, uint32_t c);
-/********************************************************
-Name:DispShowColor
-Function:Fill a color in LED matrix
-Parameter:R: the value of RED.   Range:RED 0~255
-          G: the value of GREEN. Range:RED 0~255
-          B: the value of BLUE.  Range:RED 0~255
-********************************************************/
-void draw_point_color(struct I2C1735 *handle, uint8_t coor[2], uint8_t R, uint8_t G, uint8_t B);
-void draw_point(struct I2C1735 *handle, uint8_t coor[2], uint32_t c);
-
-void draw_line_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
-void draw_line(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
-
-void draw_rectangle_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
-void draw_rectangle(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
-
-void DispShowPic(struct I2C1735 *handle, uint8_t Index, uint8_t R, uint8_t G, uint8_t B);
-
-void ShowPic(struct I2C1735 *handle, uint8_t Index);
-
 static const uint8_t _NeoPixelGammaTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -73,14 +28,161 @@ static const uint8_t _NeoPixelGammaTable[256] = {
     182, 184, 186, 188, 191, 193, 195, 197, 199, 202, 204, 206, 209, 211, 213, 215,
     218, 220, 223, 225, 227, 230, 232, 235, 237, 240, 242, 245, 247, 250, 252, 255};
 
+/**
+ * @brief Handler that we use to specify which LED matrix we are using
+ * @param uint8_t buffer that we put all of our RGB matrix data
+ * @param int i2c_handler the handler that we use for specifying which i2c bus we are using
+ */
+struct I2C1735
+{
+    uint8_t rgb_buffer[64][3];
+    int i2c_handle;
+};
+
+/**
+ * @brief Initializes the hardware registers and i2c bus devices for our RGB matrix
+ * @param struct I2C1735 *pointer to the handler that manages our LED matrix
+ */
+void RGBMatrixInit(struct I2C1735 *handle);
+
+/**
+ * @brief Fills in the entire display with a specifc color
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void disp_show_color(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Passing a character through the display as if it's flying by
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void flowchar(struct I2C1735 *handle, char chr, uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Passes in text that flys by through the display.
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void show_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Passes in text that flys by through the display. But flows in a specific direction
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ * @param direction that we are sending the text through
+ * @param delayms is the amount of time we delay bweteen sending each animation frame
+ */
+void flow_text(struct I2C1735 *handle, char str[], uint8_t R, uint8_t G, uint8_t B, char direction, int delayms);
+
+/**
+ * @brief Sets the background color of the matrix.
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void set_backcolor(struct I2C1735 *handle, uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Prints a hex value to the display
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t hex[] array of hexademical characters that we are going to send
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ * @param char bias
+ */
+void show_hex(struct I2C1735 *handle, uint8_t hex[], uint8_t R, uint8_t G, uint8_t B, char bias /*,char up_down=0*/);
+
+/**
+ * @param x inital value
+ * @param n power ^n
+ * @returns the value of x to the power n
+ */
+uint8_t pow(uint8_t x, uint8_t n);
+
+/**
+ * @brief Fills in the entire display with a specifc color
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint32_t (c) color encoded in a 32bit integer.
+ */
+void disp_show_color_uint32(struct I2C1735 *handle, uint32_t c);
+
+/**
+ * @brief Fills in a specifc rgb value to a specific LED location
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[2] Coordinates of which point we are putting on the matrix
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void draw_point_color(struct I2C1735 *handle, uint8_t coor[2], uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Fills in a specifc rgb value to a specific LED location
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[2] Coordinates of which point we are putting on the matrix
+ * @param uint32_t c 32 bit encoded color
+ */
+void draw_point(struct I2C1735 *handle, uint8_t coor[2], uint32_t c);
+
+/**
+ * @brief Fills in a specifc rgb value to a line of leds on the matrix
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[4] Coordinates of which point we are putting on the matrix(upper and lower bounds)
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void draw_line_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
+
+/**
+ * @brief Fills in a specifc rgb value to a line of leds on the matrix
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[4] Coordinates of which point we are putting on the matrix(upper and lower bounds)
+ * @param uint32_t 32bit encoded color value
+ */
+void draw_line(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
+
+/**
+ * @brief Fills in a specifc rgb value to a box of leds on the matrix
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[4] Coordinates of which point we are putting on the matrix(upper and lower bounds)
+ * @param uint8_t r color value
+ * @param uint8_t g color value
+ * @param uint8_T b color value
+ */
+void draw_rectangle_color(struct I2C1735 *handle, uint8_t coor[4], uint8_t R, uint8_t G, uint8_t B);
+
 /*!
-    @brief  Class that stores state and functions for interacting with
-            Adafruit NeoPixels and compatible devices.
-*/
+ * @brief Fills in a specifc rgb value to a box of leds on the matrix
+ * @param struct I2C handler that points to the matrix device we are using
+ * @param uint8_t coor[4] Coordinates of which point we are putting on the matrix(upper and lower bounds)
+ * @param uint32_t 32bit encoded color value
+ */
+void draw_rectangle(struct I2C1735 *handle, uint8_t coor[4], uint32_t c);
+
+/**
+ * @brief Displays the data from our matrix
+ * @param struct I2C1735*handler for all our matrix related stuff
+ */
 void image_test(struct I2C1735 *handle);
+
+/**
+ * @brief Displays the data from our matrix
+ * @param struct I2C1735*handler for all our matrix related stuff
+ */
 void image(struct I2C1735 *handle);
 
 uint32_t color_hsv(uint16_t hue, uint8_t sat, uint8_t val);
-
 uint32_t gamma32(uint32_t x);
 #endif
