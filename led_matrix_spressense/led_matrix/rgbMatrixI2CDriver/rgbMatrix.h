@@ -10,6 +10,9 @@
 #include <nuttx/i2c/i2c_master.h>
 #include "rgbMatrix.h"
 
+/**
+ * @brief Gamma mapping table for animations
+ */
 static const uint8_t _NeoPixelGammaTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -183,6 +186,18 @@ void image_test(struct I2C1735 *handle);
  */
 void image(struct I2C1735 *handle);
 
+/**
+ * @brief Converts an HSV color into a 32bit encoded RGB value
+ * @param uint16_t hue
+ * @param uint8_t saturation
+ * @param uint8_t value
+ * @return 32bit encoded color value
+ */
 uint32_t color_hsv(uint16_t hue, uint8_t sat, uint8_t val);
+
+/**
+ * @brief Gamma map
+ * @param uint32_t
+ */
 uint32_t gamma32(uint32_t x);
 #endif
