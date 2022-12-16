@@ -1,6 +1,5 @@
 #include "led_matrix_thread.h"
-
-#include "LedMatrix.h"
+#include "MAX7219LedMatrix/LedMatrix.h"
 #include "spark_wiring_system.h"
 
 #define NUMBER_OF_DEVICES 6
