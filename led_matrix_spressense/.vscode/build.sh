@@ -105,7 +105,7 @@ function build_sdk (){
     fi
 
     cd ${SDK_PATH}/sdk
-    make -j8
+    make -j16
 
     # Check exit status
     check_exit_status

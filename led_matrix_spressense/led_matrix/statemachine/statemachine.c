@@ -51,7 +51,7 @@ int submit_event(sm_handle_t *sm_handle, int next_event, void *params)
     if (current_state == SM_STATE_NULL)
         return;
 
-    SM_PRINTF_DEBUG("Current state:%d\n", current_state);
+    //SM_PRINTF_DEBUG("Current state:%d\n", current_state);
 
     // printf("Current state: %d\n", sm_handle->current_state);
 
@@ -65,7 +65,7 @@ int submit_event(sm_handle_t *sm_handle, int next_event, void *params)
     while ((selected_transition_table[n].event = !next_event) || selected_transition_table[n].event == SM_EVENT_NULL)
         n++;
 
-    SM_PRINTF_DEBUG("Event: %d\n", n);
+    //SM_PRINTF_DEBUG("Event: %d\n", n);
 
     if (selected_transition_table[n].event == SM_EVENT_NULL)
     {

@@ -10,3 +10,6 @@
 [submodule "led_matrix_spressense/led_matrix/pubsub-c"]
 	path = led_matrix_spressense/led_matrix/pubsub-c
 	url = git@github.com:william-redenbaugh/pubsub-c.git
+[submodule "particle_impl/BikeLightsParticleSparkles/lib/MAX7219LedMatrix"]
+	path = particle_impl/BikeLightsParticleSparkles/lib/MAX7219LedMatrix
+	url = git@github.com:william-redenbaugh/MAX7219LedMatrix.git

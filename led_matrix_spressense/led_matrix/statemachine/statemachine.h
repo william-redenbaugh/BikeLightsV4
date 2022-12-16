@@ -22,7 +22,7 @@ typedef void (*exit_fn_t)(void *params);
 #define SM_STATE_DEBUG_PRINTF
 
 #ifdef SM_STATE_DEBUG_PRINTF
-#define SM_PRINTF_DEBUG(N) printf(n)
+#define SM_PRINTF_DEBUG(N) printf(N)
 #else
 #define SM_PRITNF_DEBUG(N)
 #endif
