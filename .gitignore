@@ -1,2 +1,6 @@
+particle_impl/BikeLightsParticleSparkles/target
+*.lst
+*.bin
+*.hex
 *.o
 *.dep
