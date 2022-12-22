@@ -1,6 +1,6 @@
 #include "bluetooth_interface_module.h"
 #include "Particle.h"
-
+#include "pubsub/pubsub.h"
 
 // This example does not require the cloud so you can run it in manual mode or
 // normal cloud-connected mode
@@ -29,21 +29,24 @@ Timer battery_ble_update_timer(3000, update_battery_level_ble);
 void update_battery_level_ble(void){
     FuelGauge fuel;
     float battery_level = fuel.getVCell();
-    
+
     batteryLevelCharacteristic.setValue((const char*)&battery_level);
 }
 
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context) {
-    // Log.trace("Received data from: %02X:%02X:%02X:%02X:%02X:%02X:", peer.address()[0], peer.address()[1], peer.address()[2], peer.address()[3], peer.address()[4], peer.address()[5]);
 
-    for (size_t ii = 0; ii < len; ii++) {
-        Serial.write(data[ii]);
+    if(len){
+        if(data[0] == 'r'){
+            publish_event(EVENT_LED_TURN_RIGHT, NULL);
+        }
+        if(data[0] == 'l'){
+              publish_event(EVENT_LED_TURN_LEFT, NULL);
+        }
     }
 }
 
 void bluetooth_interface_thread(void *params){
     for(;;){
-        
         delay(3000);
     }
 }

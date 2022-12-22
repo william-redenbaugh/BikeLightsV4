@@ -83,7 +83,7 @@ bool available_events(int eventspace){
     }
 
     event_data_t data;
-    if(os_queue_peek(local_eventspaces[eventspace], &data, 100, NULL) == 0){
+    if(os_queue_peek(local_eventspaces[eventspace], &data, 0, NULL) == 0){
         return true;
     }
 

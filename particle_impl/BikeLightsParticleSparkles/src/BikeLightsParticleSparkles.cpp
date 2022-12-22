@@ -12,16 +12,20 @@ void loop();
 #line 4 "/home/wredenba/git/BikeLightsV4/particle_impl/BikeLightsParticleSparkles/src/BikeLightsParticleSparkles.ino"
 SYSTEM_THREAD(ENABLED);
 
+//#define LOGGING_USB
+#ifdef LOGGING_USB
+SerialLogHandler logHandler;
+#endif
+
 void setup() {
+#ifdef LOGGING_USB
+  waitFor(Serial.isConnected, 15000);
+  Log.info("Logging initialized");
+#endif
   Cellular.off();
   threads_list_init();
 }
 
 void loop() {
-
-  publish_event(EVENT_LED_TURN_RIGHT, NULL);
-  delay(3000);
-
-  publish_event(EVENT_LED_TURN_LEFT, NULL);
-  delay(3000);
+  delay(50000);
 }

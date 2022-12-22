@@ -18,37 +18,47 @@ static event_type_t eventlist[] = {
 };
 
 void led_thread_init(void){
-    led_matrix.init();
-    led_matrix.setIntensity(2);
-    led_matrix.clear();
-    led_matrix.commit();
 
     // Subscribe to led change events
     eventspace = subscribe_eventlist(eventlist, sizeof(eventlist), 16);
+    Log.info("eventspace: %d", eventspace);
+
+    // Initialize LED matrix
+    led_matrix.init();
+    led_matrix.setIntensity(15);
+    led_matrix.clear();
+    led_matrix.commit();
 }
 
+int event_led_turn_x = 0;
 inline void event_led_turn_right_animation(void){
-    for(int x = 0; x < 8; x++){
-        led_matrix.clear();
-        for(int y = 0; y < 63; y++){
-            led_matrix.setPixel(y, x);
-        }
 
-        led_matrix.commit();
-        delay(100);
+    led_matrix.clear();
+    for(int y = 0; y < 63; y++){
+        led_matrix.setPixel(y, event_led_turn_x);
     }
+
+    event_led_turn_x++;
+    if(event_led_turn_x == 8)
+        event_led_turn_x = 0;
+
+    led_matrix.commit();
+    delay(50);
 }
 
 inline void event_led_turn_left_animation(void){
-    for(int x = 8; x >= 0; x--){
-        led_matrix.clear();
-        for(int y = 0; y < 63; y++){
-            led_matrix.setPixel(y, x);
-        }
 
-        led_matrix.commit();
-        delay(100);
+    led_matrix.clear();
+    for(int y = 0; y < 63; y++){
+        led_matrix.setPixel(y, event_led_turn_x);
     }
+
+    event_led_turn_x--;
+    if(event_led_turn_x == -1)
+        event_led_turn_x = 7;
+
+    led_matrix.commit();
+    delay(50);
 }
 
 
@@ -81,14 +91,15 @@ void led_matrix_thread(void *params){
             break;
 
         case EVENT_LED_FLASH_SLOWING_DOWN:
+            delay(100);
             break;
 
         case EVENT_LED_OFF:
+            delay(100);
             break;
 
         default:
             break;
         }
-
     }
 }
