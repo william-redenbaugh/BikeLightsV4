@@ -83,9 +83,11 @@ bool available_events(int eventspace){
     }
 
     event_data_t data;
-    os_queue_peek(local_eventspaces[eventspace], &data, (system_tick_t)-1, NULL);
+    if(os_queue_peek(local_eventspaces[eventspace], &data, 100, NULL) == 0){
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 event_data_t consume_event(int eventspace){

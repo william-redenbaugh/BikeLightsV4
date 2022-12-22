@@ -1,4 +1,7 @@
 #include "threads_init/threads_init.h"
+#include "pubsub/pubsub.h"
+
+SYSTEM_THREAD(ENABLED);
 
 void setup() {
   Cellular.off();
@@ -6,5 +9,10 @@ void setup() {
 }
 
 void loop() {
-  delay(50000);
+
+  publish_event(EVENT_LED_TURN_RIGHT, NULL);
+  delay(3000);
+
+  publish_event(EVENT_LED_TURN_LEFT, NULL);
+  delay(3000);
 }
